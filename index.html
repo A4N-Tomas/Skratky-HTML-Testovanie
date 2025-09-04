@@ -1,0 +1,1482 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TEST klávesových skratiek vo Windows, Total Commander a webový prehliadač</title>
+  <style>
+    :root {
+      --bg-start: #892d78;
+      --bg-end: #892d78;
+      --card: rgba(255,255,255,0.70);
+      --card-border: rgba(255,255,255,0.55);
+      --fg:#0f172a;
+      --muted:#475569;
+      --accent: #892d78;
+      --accent-2: #892d78;
+      --ok:#059669;
+      --bad:#dc2626;
+    }
+    
+    * { box-sizing: border-box; }
+    
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      margin: 0;
+      color: var(--fg);
+      background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-start) 100%);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(1000px 600px at -20% -20%, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 60%),
+        radial-gradient(800px 500px at 120% -10%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 60%);
+      z-index: 0;
+    }
+    
+    .container { 
+      position: relative; 
+      z-index: 1; 
+      margin-top: 80px; 
+      max-width: 1080px; 
+      margin: 24px auto 80px; 
+      padding: 0 16px; 
+    }
+    
+    h1 { 
+      font-size: 28px; 
+      margin: 12px 0 8px; 
+      color: #ffffff; 
+      text-shadow: 0 2px 12px rgba(0,0,0,.15); 
+    }
+    
+    h2 { font-size: 22px; margin: 8px 0; }
+    h3 { font-size: 18px; margin: 6px 0; }
+    
+    .tabs { 
+      display: flex; 
+      gap: 10px; 
+      margin: 12px 0 16px; 
+      flex-wrap: wrap; 
+    }
+    
+    .tab { 
+      padding: 10px 14px; 
+      border-radius: 12px; 
+      background: rgba(255,255,255,0.25);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: #0f172a;
+      transition: all .2s ease;
+      backdrop-filter: blur(6px);
+      cursor: pointer; 
+      user-select: none; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+    }
+    
+    .tab:hover { transform: translateY(-1px); }
+    
+    .tab.active {
+      background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent-2) 100%);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(31, 41, 255, .25);
+      border: 2px solid #000; 
+    }
+    
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.12);
+      padding: 18px;
+      margin-bottom: 16px;
+      color: #0f172a;
+    }
+    
+    .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .small { font-size: .9rem; color: var(--muted); }
+    .big { font-size: 1.15rem; font-weight: 600; }
+    .counter { font-variant: tabular-nums; }
+    .center { display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; }
+    .space { height: 8px; }
+    
+    .btn {
+      border: 1px solid rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.85);
+      transition: all .15s ease;
+      box-shadow: 0 6px 16px rgba(2,6,23,.06);
+      border-radius: 12px; 
+      padding: 10px 14px; 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      text-decoration: none; 
+      color: inherit;
+    }
+    
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(2,6,23,.12); }
+    
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent-2) 100%);
+      color: #fff; 
+      box-shadow: 0 8px 20px rgba(99,102,241,.35);
+      border: 2px solid #000; 
+    }
+    
+    .btn[disabled] { 
+      opacity: .6; 
+      cursor: not-allowed; 
+    }
+    
+    .options { 
+      display: grid; 
+      grid-template-columns: repeat(2, minmax(240px,1fr)); 
+      gap: 10px; 
+      margin-top: 8px; 
+    }
+    
+    button.option { 
+      text-align: left; 
+      border: 1px solid rgba(15,23,42,0.08);
+      background: rgba(255,255,255,0.9);
+      transition: transform .05s ease, box-shadow .2s ease, border-color .2s ease;
+      box-shadow: 0 6px 16px rgba(2,6,23,.06);
+      padding: 10px 12px; 
+      border-radius: 12px; 
+      cursor: pointer;
+    }
+    
+    button.option:hover { transform: translateY(-1px); border-color: rgba(15,23,42,0.3); }
+    
+    button.option.correct { 
+      border-color: #58d1a0; 
+      background: #edfff7; 
+      position: relative; 
+    }
+    
+    button.option.correct::after { 
+      content: "✓ správne"; 
+      position: absolute; 
+      right: 10px; 
+      top: 8px; 
+      color: var(--ok); 
+      font-weight: 700; 
+    }
+    
+    button.option.wrong { 
+      border-color: #f4b9b9; 
+      background: #fff6f6; 
+      position: relative; 
+    }
+    
+    button.option.wrong::after { 
+      content: "✗"; 
+      position: absolute; 
+      right: 10px; 
+      top: 8px; 
+      color: var(--bad); 
+      font-weight: 700; 
+    }
+    
+    input[type="text"], input[type="password"] {
+      background: rgba(255,255,255,0.85);
+      border-color: rgba(15,23,42,0.15);
+      padding: 10px 12px; 
+      border: 1px solid #cfd4dc; 
+      border-radius: 12px;
+    }
+    
+    input.invalid { border-color: var(--bad); }
+    
+    .timebar { 
+      height: 12px; 
+      width: 100%; 
+      background: rgba(255,255,255,0.55); 
+      border-radius: 999px; 
+      overflow: hidden; 
+      margin: 6px 0 4px; 
+    }
+    
+    .timefill { 
+      height: 100%; 
+      width: 100%; 
+      transition: width 1s linear; 
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,.08); 
+    }
+    
+    .timefill.good { background: linear-gradient(90deg, #16a34a, #22c55e); }
+    .timefill.warn { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .timefill.critical { background: linear-gradient(90deg, #ef4444, #f87171); }
+    
+    @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:.35} }
+    .timefill.blink { animation: blink 1s steps(2, start) infinite; }
+    
+    .result-banner { 
+      padding: 12px 14px; 
+      border-radius: 12px; 
+      border: 1px solid #ddd; 
+    }
+    
+    .result-ok { background: #f2fbf7; border-color: #9ad8c1; }
+    .result-bad { background: #fff7f7; border-color: #f6b9b9; }
+    
+    .alert {
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      border: 2px solid;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+    }
+    
+    .alert-warning {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-color: #f59e0b;
+      color: #92400e;
+    }
+    
+    .icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+    
+    .tab .icon {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .alert .icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+    }
+    
+    .brandlogo { 
+      position: fixed; 
+      top: 14px; 
+      left: 14px; 
+      z-index: 50; 
+      display: inline-flex; 
+      padding: 6px 10px; 
+      background: rgba(255,255,255,0.85); 
+      border: 1px solid rgba(15,23,42,0.15);
+      border-radius: 12px; 
+      backdrop-filter: blur(6px); 
+      box-shadow: 0 6px 16px rgba(2,6,23,.10); 
+      align-items: center; 
+      gap: 10px; 
+      text-decoration: none; 
+      font-weight: bold;
+      color: #892d78;
+    }
+
+    /* Practice section */
+    .practice-controls { 
+      display: flex; 
+      gap: 8px; 
+      align-items: center; 
+      flex-wrap: wrap; 
+      margin-bottom: 10px; 
+    }
+    
+    .tasks { 
+      margin: 0; 
+      padding-left: 0; 
+      list-style: none; 
+    }
+    
+    .task-item { 
+      display: flex; 
+      gap: 8px; 
+      align-items: flex-start; 
+      padding: 8px 10px; 
+      border: 1px solid rgba(15,23,42,0.08);
+      background: rgba(255,255,255,0.85);
+      box-shadow: 0 4px 12px rgba(2,6,23,.06);
+      border-radius: 12px; 
+      margin-bottom: 8px; 
+      cursor: pointer; 
+    }
+    
+    .task-item:hover { background: #f8f9fa; }
+    
+    .task-item input[type="checkbox"] { transform: translateY(4px); }
+    
+    .task-item .hint { 
+      display: none; 
+      font-style: italic; 
+      margin-left: 6px; 
+      color: var(--muted); 
+    }
+    
+    .progress { font-size: .95rem; }
+    .section { margin-top: 12px; }
+  </style>
+<style>
+/* Normalize text style in the Praktický test tab */
+#practice p,
+#practice li,
+#practice span,
+#practice .task-item,
+#practice .task-item * {
+  font-weight: normal !important;
+  font-family: inherit !important;
+}
+</style>
+<style>
+/* Normalize text style in the Záverečný test tab */
+#finaltest p,
+#finaltest li,
+#finaltest span,
+#finaltest .task-item,
+#finaltest .task-item * {
+  font-weight: normal !important;
+  font-family: inherit !important;
+}
+</style>
+</head>
+<body>
+
+  <a class="brandlogo" href="https://www.mojesidlo.sk" target="_blank" rel="noopener" aria-label="MojeSidlo.sk">
+    <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+    </svg>
+    MojeSidlo.sk
+  </a>
+
+  <div class="container">
+    <h1>TEST klávesových skratiek vo Windows, Total Commander a webový prehliadač</h1>
+
+    <div class="tabs" id="tabs">
+      <div class="tab active" data-tab="shortcuts" role="button" tabindex="0">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+          <line x1="8" y1="21" x2="16" y2="21"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+        Klávesové skratky
+      </div>
+      <div class="tab" data-tab="quiz" role="button" tabindex="0">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Testovací kvíz
+      </div>
+      <div class="tab" data-tab="practice" role="button" tabindex="0">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+        Praktický test
+      </div>
+      <div class="tab" data-tab="finaltest" role="button" tabindex="0">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+        </svg>
+        Záverečný test
+      </div>
+    </div>
+
+    <!-- SHORTCUTS -->
+    <section id="shortcuts" class="card">
+      <p class="big">Tento tréning ti pomôže naučiť sa skratky, ktoré budeš používať každý deň. Začni zoznamom klávesových skratiek, potom si ich otestuj v kvíze, pokračuj praktickými úlohami a svoju zručnosť si spoločne overíme v záverečnom teste.</p>
+      <ul>
+        <li><b>Kvíz:</b> pozostáva z 20 otázok zameraných na oblasti Windows, Total Commander, webový prehliadač Firefox, Excel a Ladesk.</li>
+        <li><b>Praktický test:</b> reálne kroky vo Windows, Total Commanderi, prehliadači Firefox, Exceli a Ladesku.</li>
+      </ul>
+
+      <div style="margin-top: 24px;">
+        <h3>Prehľad klávesových skratiek</h3>
+        
+        <div style="margin-bottom: 20px;">
+          <h4 style="color: var(--accent); margin-bottom: 10px;">🌐 Prehliadač Firefox</h4>
+          <div style="display: grid; grid-template-columns: 200px 1fr; gap: 8px 16px; margin-bottom: 16px; font-size: 14px;">
+            <div><strong>Skratka</strong></div><div><strong>Akcia</strong></div>
+            <div><code>Ctrl + T</code></div><div>Vytvoriť nový tab</div>
+            <div><code>Ctrl + W</code></div><div>Zavrieť aktuálny tab</div>
+            <div><code>Ctrl + Shift + T</code></div><div>Otvoriť posledný zavretý tab</div>
+            <div><code>Ctrl + L</code></div><div>Zadať URL adresu</div>
+            <div><code>Ctrl + E</code></div><div>Vyhľadávať v Googli</div>
+            <div><code>Ctrl + Tab</code></div><div>Presunúť sa na tab vpravo</div>
+            <div><code>Ctrl + Shift + Tab</code></div><div>Presunúť sa na tab vľavo</div>
+            <div><code>Ctrl + číslo (1-8)</code></div><div>Otvoriť konkrétny tab podľa poradia</div>
+            <div><code>Ctrl + 9</code></div><div>Otvoriť posledný tab</div>
+            <div><code>Win + ↑</code></div><div>Maximalizovať okno</div>
+            <div><code>Win + ↓</code></div><div>Zmenšiť okno</div>
+            <div><code>Ctrl + J</code></div><div>Otvoriť stiahnuté súbory</div>
+            <div><code>Ctrl + koliesko myšky</code></div><div>Priblíženie/oddialenie webovej stránky</div>
+            <div><code>Ctrl + F</code></div><div>Vyhľadávanie na webovej stránke</div>
+            <div><code>F5</code></div><div>Obnoviť stránku</div>
+            <div><code>Ctrl + F5</code></div><div>Vykonať tvrdý refresh stránky</div>
+            <div><code>Ctrl + Shift + S</code></div><div>Urobiť printscreen</div>
+            <div><code>Ctrl + I</code></div><div>Zobraziť info o schránke</div>
+            <div><code>Ctrl + U</code></div><div>Zobraziť zdrojový kód stránky</div>
+            <div><code>Tab</code></div><div>Presunúť sa na ďalší interaktívny prvok</div>
+            <div><code>Shift + Tab</code></div><div>Presunúť sa na predchádzajúci interaktívny prvok</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <h4 style="color: var(--accent); margin-bottom: 10px;">🪟 Windows</h4>
+          <div style="display: grid; grid-template-columns: 200px 1fr; gap: 8px 16px; margin-bottom: 16px; font-size: 14px;">
+            <div><strong>Skratka</strong></div><div><strong>Akcia</strong></div>
+            <div><code>Ctrl + C</code></div><div>Kopírovať vybratú položku</div>
+            <div><code>Ctrl + V</code></div><div>Prilepiť vybratú položku</div>
+            <div><code>Ctrl + X</code></div><div>Vystrihnúť vybratú položku</div>
+            <div><code>Alt + F4</code></div><div>Zatvoriť aktívnu položku/aplikáciu</div>
+            <div><code>Win + V</code></div><div>Otvoriť schránku (Clipboard)*</div>
+            <div><code>Alt + Tab</code></div><div>Presunúť sa medzi otvorenými programami</div>
+            <div><code>Home</code></div><div>Presunúť sa na začiatok</div>
+            <div><code>End</code></div><div>Presunúť sa na koniec</div>
+            <div><code>Ctrl + Shift + Šípka</code></div><div>Označiť celé slová</div>
+            <div><code>Ctrl + A</code></div><div>Vybrať všetky položky v dokumente/okne</div>
+            <div><code>Ctrl + →</code></div><div>Presunúť kurzor na začiatok ďalšieho slova</div>
+            <div><code>Ctrl + ←</code></div><div>Presunúť kurzor na začiatok predošlého slova</div>
+            <div><code>Win + Shift + S</code></div><div>Urobiť printscreen</div>
+            <div><code>Ctrl + Z</code></div><div>Vrátiť poslednú akciu/krok späť</div>
+            <div><code>Win + M</code></div><div>Minimalizovať všetky okná</div>
+            <div><code>Win + Shift + M</code></div><div>Vrátiť minimalizované okná späť</div>
+            <div><code>Win + L</code></div><div>Zamknúť počítač</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <h4 style="color: var(--accent); margin-bottom: 10px;">📁 Total Commander</h4>
+          <div style="display: grid; grid-template-columns: 200px 1fr; gap: 8px 16px; margin-bottom: 16px; font-size: 14px;">
+            <div><strong>Skratka</strong></div><div><strong>Akcia</strong></div>
+            <div><code>F4</code></div><div>Zobraziť textový súbor</div>
+            <div><code>Shift + F4</code></div><div>Vytvoriť nový súbor</div>
+            <div><code>F5</code></div><div>Kopírovať</div>
+            <div><code>F6</code></div><div>Presunúť</div>
+            <div><code>Shift + F6</code></div><div>Premenovať</div>
+            <div><code>Shift + F6 (2×)</code></div><div>Premenovať so zachovaním prípony*</div>
+            <div><code>F7</code></div><div>Vytvoriť nový adresár</div>
+            <div><code>Alt + F7</code></div><div>Vyhľadávať</div>
+            <div><code>Ctrl + M</code></div><div>Hromadne premenovať súbory</div>
+            <div><code>Delete</code></div><div>Mazať</div>
+            <div><code>Space</code></div><div>Zobraziť veľkosť adresára</div>
+            <div><code>Alt + F5</code></div><div>Zipovať súbory</div>
+            <div><code>Insert</code></div><div>Označiť položku</div>
+            <div><code>Shift + ↑/↓</code></div><div>Označiť viacero položiek postupne</div>
+            <div><code>+ (plus)</code></div><div>Označiť hromadne</div>
+            <div><code>- (mínus)</code></div><div>Odznačiť hromadne</div>
+            <div><code>End</code></div><div>Presunúť sa na posledný súbor v zozname</div>
+            <div><code>Home</code></div><div>Presunúť sa na prvý súbor v zozname</div>
+            <div><code>Tab</code></div><div>Prepnúť medzi ľavým a pravým panelom</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <h4 style="color: var(--accent); margin-bottom: 10px;">📊 Excel</h4>
+          <div style="display: grid; grid-template-columns: 200px 1fr; gap: 8px 16px; margin-bottom: 16px; font-size: 14px;">
+            <div><strong>Skratka</strong></div><div><strong>Akcia</strong></div>
+            <div><code>Ctrl + A</code></div><div>Označiť celú tabuľku</div>
+            <div><code>Ctrl + myš (ľavé tlačidlo)</code></div><div>Označiť neprilehlé bunky</div>
+            <div><code>Ctrl + Shift + šípky</code></div><div>Označiť vyplnené bunky</div>
+            <div><code>Ctrl + Page down</code></div><div>Presunúť sa na ďalší hárok</div>
+            <div><code>Ctrl + Page up</code></div><div>Presunúť sa na predchádzajúci hárok</div>
+            <div><code>Ctrl + šípky</code></div><div>Presunúť sa na koniec/začiatok riadka/stĺpca</div>
+            <div><code>Ctrl + B</code></div><div>Nastaviť tučné písmo</div>
+            <div><code>Ctrl + I</code></div><div>Nastaviť kurzívu</div>
+            <div><code>Ctrl + U</code></div><div>Pridať podčiarknutie</div>
+            <div><code>Alt + Enter</code></div><div>Zalomiť text v bunke</div>
+            <div><code>F2</code></div><div>Upraviť hodnotu v bunke</div>
+            <div><code>Alt + =</code></div><div>Aktivovať funkciu SUM</div>
+            <div><code>Ctrl + plus</code></div><div>Pridať stĺpec/riadok</div>
+            <div><code>Ctrl + mínus</code></div><div>Odstrániť stĺpec/riadok</div>
+            <div><code>Ctrl + S</code></div><div>Uložiť dokument</div>
+            <div><code>Ctrl + F</code></div><div>Otvoriť dialógové okno Nájsť a nahradiť</div>
+            <div><code>Ctrl + K</code></div><div>Vytvoriť hypertextové prepojenie</div>
+            <div><code>Ctrl + N</code></div><div>Vytvoriť nový prázdny zošit</div>
+            <div><code>Ctrl + P</code></div><div>Otvoriť možnosť Tlačiť</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <h4 style="color: var(--accent); margin-bottom: 10px;">🎫 Ladesk</h4>
+          <div style="display: grid; grid-template-columns: 200px 1fr; gap: 8px 16px; margin-bottom: 16px; font-size: 14px;">
+            <div><strong>Skratka</strong></div><div><strong>Akcia</strong></div>
+            <div><code>Ctrl + E</code></div><div>Vyriešiť ticket</div>
+            <div><code>Ctrl + Q</code></div><div>Zatvoriť okno ticketu</div>
+            <div><code>Ctrl + S</code></div><div>Odoslať správu</div>
+            <div><code>Ctrl + O</code></div><div>Odložiť správu</div>
+            <div><code>Ctrl + Space</code></div><div>Zobraziť ťaháky</div>
+            <div><code>Ctrl + ľavý klik</code></div><div>Otvoriť ticket na pozadí*</div>
+            <div><code>Ctrl + ↑</code></div><div>Prechádzať cez otvorené karty ticketov doprava</div>
+            <div><code>Ctrl + ↓</code></div><div>Prechádzať cez otvorené karty ticketov doľava</div>
+            <div><code>Alt + H</code></div><div>Otvoriť nápovedu skratiek</div>
+            <div><code>Ctrl + Shift + D</code></div><div>Pridanie flagu/značky danému ticketu</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="center" style="margin-bottom:8px;">
+        <a class="btn primary" style="text-decoration:none" target="_blank" rel="noopener" href="https://wiki.all4net.sk/books/ako-pracujeme/page/klavesove-skratky">
+          <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          </svg>
+          Otvoriť internú wiki so skratkami
+        </a>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="card" style="display:none;">
+      <div class="alert alert-warning">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.732 15.5c-.77.833.192 2.5 1.732 2.5z"/>
+        </svg>
+        <div><strong>Dôležité:</strong> Pri každej otázke si pozorne prečítaj, z ktorého programu/aplikácie má byť požadovaná klávesová skratka.</div>
+      </div>
+      
+      <div class="row" style="gap:8px; align-items:center;">
+        <label for="qName" class="small">Meno a priezvisko:</label>
+        <input type="text" id="qName" placeholder="Zadaj meno a priezvisko" autocomplete="off" />
+      </div>
+      
+      <div id="qNameOverlay" class="small" style="display:none; color:#c33;">Kým nevyplníš meno a priezvisko, kvíz sa nedá spustiť ani ovládať.</div>
+      
+      <div class="row" style="gap:10px;">
+        <div>Otázka <b class="counter" id="qNum">1</b>/<b class="counter" id="qTotal">20</b></div>
+        <div>Čas: <b id="qTime" class="counter">180</b> s</div>
+      </div>
+      
+      <div class="timebar"><div id="qTimeFill" class="timefill good" style="width:100%"></div></div>
+      
+      <div class="row" style="gap:10px; margin-top:12px;">
+        <div style="font-size:1.3rem; font-weight:700;">
+          <span style="background:#892d78; color:white; padding:6px 12px; border-radius:999px;">Oblasť: <span id="qArea">Windows</span></span>
+        </div>
+      </div>
+      
+      <div class="row" style="margin-top:12px;">
+        <div><b style="font-weight:700;">Otázka:</b> <span id="qText" class="big">Kopírovať vybratú položku</span></div>
+      </div>
+      
+      <div class="options" id="qOptions">
+        <button class="option">Ctrl + C</button>
+        <button class="option">Ctrl + V</button>
+        <button class="option">Ctrl + X</button>
+        <button class="option">Alt + F4</button>
+      </div>
+      
+      <div class="space"></div>
+      
+      <div class="row" style="gap:8px;">
+        <div>Správne: <b id="qScore" class="counter">0</b></div>
+        <div>Nesprávne: <b id="qWrong" class="counter">0</b></div>
+        
+        <button id="qPrev" class="btn">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          Predchádzajúca otázka
+        </button>
+        
+        <button id="qNext" class="btn">
+          Ďalšia otázka
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+        
+        <button id="qReset" class="btn">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Reset kvízu
+        </button>
+        
+        <button id="qExport" class="btn" style="display:none;">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          </svg>
+          Export výsledkov (Excel)
+        </button>
+        <a id="dl" style="display:none;"></a>
+      </div>
+      
+      <div class="space"></div>
+      <div id="qResult" class="result-banner" style="display:none;"></div>
+    </section>
+
+    <!-- PRACTICE -->
+    <section id="practice" class="card" style="display:none;">
+      <h2>Praktický test — Reálne kroky v aplikáciách</h2>
+      <p class="big">Vykonaj nasledovné úlohy v skutočných aplikáciách. Zaškrtávaj si splnené body — progres sa počíta zvlášť pre každú sekciu.</p>
+      
+      <div class="practice-controls">
+        <button id="toggleHints" class="btn">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Zobraziť nápovedy (skratky)
+        </button>
+        <span class="small">Zaškrtávaj si splnené body — progres sa počíta zvlášť pre každú sekciu.</span>
+      </div>
+
+      <div class="section" id="p1">
+        <h3>1) Windows (Poznámkový blok)</h3>
+        <div class="small progress">Splnené: <b id="p1done">0/8</div>
+        <ul class="tasks">
+          <li class="task-item" data-shortcuts="Win → notepad → Enter">
+            <input type="checkbox" class="chk" />
+            <div>Otvoriť Poznámkový blok.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="">
+            <input type="checkbox" class="chk" />
+            <div>Napíš vety „Práve sa testujem na klávesové skratky. Dúfam, že ich všetky viem.".</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + Shift + ➡️ → Ctrl + X">
+            <input type="checkbox" class="chk" />
+            <div>Označ celú prvú vetu a vystrihni ju.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + V → Enter → Ctrl + V">
+            <input type="checkbox" class="chk" />
+            <div>Vystrihnutú vetu vlož za druhú vetu.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Home → Ctrl + Shift + ➡️ → Delete">
+            <input type="checkbox" class="chk" />
+            <div>V oboch vetách odstráň prvé slovo.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + A → Ctrl + C → Alt + Tab → Ctrl + L → Ctrl + V → Enter">
+            <input type="checkbox" class="chk" />
+            <div>Označ a skopíruj obe vety, prepni sa do prehliadača, prejdi do adresného riadku a vetu vlož a potvrď vyhľadávanie.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + P → ESC → Ctrl + A → Delete">
+            <input type="checkbox" class="chk" />
+            <div>V Poznámkovom bloku skús vytlačiť otvorený list (stačí otvoriť dialógové okno ukážka pred tlačou). Zavri ho. Následne označ všetko v dokumente a vymaž.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Win + Shift + S → Alt + F4">
+            <input type="checkbox" class="chk" />
+            <div>Urob printscreen obrazovky okna Poznámkového bloku a potom aplikáciu zavri bez ukladania.</div>
+            <span class="hint"></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section" id="p2">
+        <h3>2) Total Commander</h3>
+        <div class="small progress">Splnené: <b id="p2done">0/5</div>
+        <ul class="tasks">
+          <li class="task-item" data-shortcuts="F7">
+            <input type="checkbox" class="chk" />
+            <div>Prejdi na C:\ a vytvor priečinok Testovanie.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Shift + F4">
+            <input type="checkbox" class="chk" />
+            <div>V priečinku Testovanie vytvor textový súbor ulož ako "Skúška_testovania.txt" a napíš do súboru svoje celé meno .</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Shift + F6">
+            <input type="checkbox" class="chk" />
+            <div>Premenuj súbor tak, aby sa volal "koniec_testovania.txt".</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="F5">
+            <input type="checkbox" class="chk" />
+            <div>Skopíruj súbor do druhého panela (napr. do <code>C:\-= Download =-</code>).</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Delete, TAB ">
+            <input type="checkbox" class="chk" />
+            <div>Vymaž pôvodný priečinok "Testovanie" na disku C:\ a na druhom panely vymaž textový súbor "koniec_testovania.txt".</div>
+            <span class="hint"></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section" id="p3">
+        <h3>3) Webový prehliadač</h3>
+        <div class="small progress">Splnené: <b id="p3done">0/6</div>
+        <ul class="tasks">
+          <li class="task-item" data-shortcuts="Ctrl + L; Enter">
+            <input type="checkbox" class="chk" />
+            <div>Otvor stránku MojeSidlo.sk.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + T; Ctrl + L; Enter">
+            <input type="checkbox" class="chk" />
+            <div>V novom tabe otvor orsr.sk a vyhľadaj firmu All4Net s.r.o..</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + C; Ctrl + E; Enter">
+            <input type="checkbox" class="chk" />
+            <div>Skopíruj IČO firmy a v rovnakom tabe vyhľadaj cez google dané IČO na finstat.sk.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + Tab; Ctrl + Shift + Tab">
+            <input type="checkbox" class="chk" />
+            <div>Preklikni na detail firmy a potom sa vráť na kartu s MojeSidlo.sk.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + F; Ctrl + C; Ctrl + E; Ctrl + V; Enter">
+            <input type="checkbox" class="chk" />
+            <div>Nájdi a skopíruj nadpis „Online evidencia doručenej pošty" a daj ho vyhľadať na Google.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Win + M; Win + Shift + M; Ctrl + W">
+            <input type="checkbox" class="chk" />
+            <div>Minimalizuj prehliadač, potom ho maximalizuj na celú obrazovku a nakoniec zruš všetky kraty v prehlidači okrem testu.</div>
+            <span class="hint"></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section" id="p4">
+        <h3>4) Excel</h3>
+        <div class="small progress">Splnené: <b id="p4done">0/6</div>
+        <ul class="tasks">
+          <li class="task-item" data-shortcuts="Ctrl + B">
+            <input type="checkbox" class="chk" />
+            <div>Do A1 napíš slovo „Nadpis" a ztučni ho.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Alt + =">
+            <input type="checkbox" class="chk" />
+            <div>V A2:A6 maj čísla od 1 do 5 a do bunky A7 automaticky spočítaj A2:A6.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + plus">
+            <input type="checkbox" class="chk" />
+            <div>Nad riadok 3 vlož prázdny riadok.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + K">
+            <input type="checkbox" class="chk" />
+            <div>Do B1 vlož hypertextový odkaz na mojesidlo.sk.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + F; Delete">
+            <input type="checkbox" class="chk" />
+            <div>Vyhľadaj číslo 5 v stĺpci A a vymaž ho.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + P">
+            <input type="checkbox" class="chk" />
+            <div>Otvor náhľad tlače.</div>
+            <span class="hint"></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section" id="p5">
+        <h3>5) Ladesk</h3>
+        <div class="small progress">Splnené: <b id="p5done">0/6</div>
+        <ul class="tasks">
+          <li class="task-item" data-shortcuts="">
+            <input type="checkbox" class="chk" />
+            <div>Otvor si dva tickety v Ladesku z tvojej záložky</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + Shift + D">
+            <input type="checkbox" class="chk" />
+            <div>Jeden ticket označ značkou/flagou "Brigada".</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + Space">
+            <input type="checkbox" class="chk" />
+            <div>Zobraz ťaháky v Ladesku.</div>
+            <span class="hint"></span>
+          </li>
+           <li class="task-item" data-shortcuts="Ctrl + Shift + D">
+            <input type="checkbox" class="chk" />
+            <div>Odstráň značku/flagu "Brigada" z otvoreného ticektu.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + ⬆️; Ctrl + ⬇️">
+            <input type="checkbox" class="chk" />
+            <div>Prechádzaj medzi otvorenými kartami ticketov (doprava a doľava).</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Alt + H">
+            <input type="checkbox" class="chk" />
+            <div>Zobraz nápovedu klávesových skratiek v Ladesku.</div>
+            <span class="hint"></span>
+          </li>
+          <li class="task-item" data-shortcuts="Ctrl + Q">
+            <input type="checkbox" class="chk" />
+            <div>Zatvor okno aktuálneho ticketu.</div>
+            <span class="hint"></span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- FINAL TEST -->
+    <section id="finaltest" class="card" style="display:none;">
+      <h2>Záverečný test</h2>
+      <div id="taskLocked" class="center" style="gap:8px">
+        <input type="password" id="taskPwd" placeholder="Zadaj heslo" autocomplete="off" />
+        <button id="taskUnlock" class="btn primary">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+          </svg>
+          Odomknúť
+        </button>
+      </div>
+      <div id="taskBody" style="display:none">
+        <h3>Total Commander</h3>
+        <ol>
+          <li>V ľavom paneli Total Commander prejdite na disk <code>C:\</code> a vytvor priečinok „Finálne testovanie".</li>
+          <li>V priečinku „Finálne testovanie" vytvor textový súbor a pomenuj ho „príprava testovania.txt".</li>
+          <li>Skopíruj súbor do pravého panela na disk <code>C:\</code> a premenuj ho na „pokračovanie testovania.txt".</li>
+          <li>Označ a vymaž oba pôvodné textové súbory naraz v ľavom paneli.</li>
+        </ol>
+
+        <h3>Microsoft Word</h3>
+        <ol>
+          <li>Otvor Microsoft Word.</li>
+          <li>Napíš vetu: Ráno som vstal skoro, pretože som mal dôležitý deň.</li>
+          <li>Slovo „som" vystrihni a vlož ho na koniec vety.</li>
+          <li>Skús dokument vytlačiť — otvor ukážku pred tlačou a okno zavri.</li>
+          <li>Urob výrez obrazovky okna Wordu a potom aplikáciu zatvor bez uloženia.</li>
+        </ol>
+
+        <h3>Mozilla Firefox</h3>
+        <ol>
+          <li>Otvor v prehliadači Mozilla Firefox stránku MojeSidlo.sk.</li>
+          <li>V novom tabe otvor orsr.sk a vyhľadaj firmu All4Net s.r.o.</li>
+          <li>Skopíruj IČO firmy do google a vyhľadaj ho na finstat.sk.</li>
+          <li>Vráť sa na kartu MojeSidlo.sk.</li>
+          <li>Zmenši okno prehliadača, potom ho zväčši a nakoniec aktuálnu kartu zatvor.</li>
+        </ol>
+      </div>
+    </section>
+  </div>
+
+<script>
+console.log('Skript sa načítal');
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM je pripravený');
+    
+    // ===== KVÍZ DATA =====
+    const QUESTION_POOL = [
+        // Windows
+        { area: "Windows", q: "Kopírovať vybratú položku", correct: "Ctrl + C" },
+        { area: "Windows", q: "Prilepiť vybratú položku", correct: "Ctrl + V" },
+        { area: "Windows", q: "Vystrihnúť vybratú položku", correct: "Ctrl + X" },
+        { area: "Windows", q: "Zatvoriť aktívnu položku/aplikáciu", correct: "Alt + F4" },
+        { area: "Windows", q: "Otvoriť schránku (Clipboard)", correct: "Win + V" },
+        { area: "Windows", q: "Presunúť sa medzi otvorenými programami", correct: "Alt + Tab" },
+        { area: "Windows", q: "Presunúť sa na začiatok", correct: "Home" },
+        { area: "Windows", q: "Presunúť sa na koniec", correct: "End" },
+        { area: "Windows", q: "Označiť celé slová", correct: "Ctrl + Shift + Šípka" },
+        { area: "Windows", q: "Vybrať všetky položky v dokumente/okne", correct: "Ctrl + A" },
+        { area: "Windows", q: "Presunúť kurzor na začiatok ďalšieho slova", correct: "Ctrl + →" },
+        { area: "Windows", q: "Presunúť kurzor na začiatok predošlého slova", correct: "Ctrl + ←" },
+        { area: "Windows", q: "Urobiť printscreen", correct: "Win + Shift + S" },
+        { area: "Windows", q: "Vrátiť poslednú akciu/krok späť", correct: "Ctrl + Z" },
+        { area: "Windows", q: "Minimalizovať všetky okná", correct: "Win + M" },
+        { area: "Windows", q: "Vrátiť minimalizované okná späť", correct: "Win + Shift + M" },
+        { area: "Windows", q: "Zamknúť počítač", correct: "Win + L" },
+
+        // Prehliadač
+        { area: "Prehliadač", q: "Vytvoriť nový tab", correct: "Ctrl + T" },
+        { area: "Prehliadač", q: "Zavrieť aktuálny tab", correct: "Ctrl + W" },
+        { area: "Prehliadač", q: "Otvoriť posledný zavretý tab", correct: "Ctrl + Shift + T" },
+        { area: "Prehliadač", q: "Zadať URL adresu", correct: "Ctrl + L" },
+        { area: "Prehliadač", q: "Vyhľadávať v Googli", correct: "Ctrl + E" },
+        { area: "Prehliadač", q: "Presunúť sa na tab vpravo", correct: "Ctrl + Tab" },
+        { area: "Prehliadač", q: "Presunúť sa na tab vľavo", correct: "Ctrl + Shift + Tab" },
+        { area: "Prehliadač", q: "Otvoriť konkrétny tab podľa poradia", correct: "Ctrl + číslo (1-8)" },
+        { area: "Prehliadač", q: "Otvoriť posledný tab", correct: "Ctrl + 9" },
+        { area: "Prehliadač", q: "Maximalizovať okno", correct: "Win + ↑" },
+        { area: "Prehliadač", q: "Zmenšiť okno", correct: "Win + ↓" },
+        { area: "Prehliadač", q: "Otvoriť stiahnuté súbory", correct: "Ctrl + J" },
+        { area: "Prehliadač", q: "Priblíženie/oddialenie webovej stránky", correct: "Ctrl + koliesko myšky" },
+        { area: "Prehliadač", q: "Vyhľadávanie na webovej stránke", correct: "Ctrl + F" },
+        { area: "Prehliadač", q: "Obnoviť stránku", correct: "F5" },
+        { area: "Prehliadač", q: "Vykonať tvrdý refresh stránky", correct: "Ctrl + F5" },
+        { area: "Prehliadač", q: "Zobraziť zdrojový kód stránky", correct: "Ctrl + U" },
+        { area: "Prehliadač", q: "Presunúť sa na ďalší interaktívny prvok", correct: "Tab" },
+        { area: "Prehliadač", q: "Presunúť sa na predchádzajúci interaktívny prvok", correct: "Shift + Tab" },
+
+        // Total Commander
+        { area: "Total Commander", q: "Zobraziť textový súbor", correct: "F4" },
+        { area: "Total Commander", q: "Vytvoriť nový súbor", correct: "Shift + F4" },
+        { area: "Total Commander", q: "Kopírovať", correct: "F5" },
+        { area: "Total Commander", q: "Presunúť", correct: "F6" },
+        { area: "Total Commander", q: "Premenovať", correct: "Shift + F6" },
+        { area: "Total Commander", q: "Premenovať so zachovaním prípony", correct: "Shift + F6 (2×)" },
+        { area: "Total Commander", q: "Vytvoriť nový adresár", correct: "F7" },
+        { area: "Total Commander", q: "Vyhľadávať", correct: "Alt + F7" },
+        { area: "Total Commander", q: "Hromadne premenovať súbory", correct: "Ctrl + M" },
+        { area: "Total Commander", q: "Mazať", correct: "Delete" },
+        { area: "Total Commander", q: "Zobraziť veľkosť adresára", correct: "Space" },
+        { area: "Total Commander", q: "Zipovať súbory", correct: "Alt + F5" },
+        { area: "Total Commander", q: "Označiť položku", correct: "Insert" },
+        { area: "Total Commander", q: "Označiť viacero položiek postupne", correct: "Shift + ↑/↓" },
+        { area: "Total Commander", q: "Označiť hromadne", correct: "+ (plus)" },
+        { area: "Total Commander", q: "Odznačiť hromadne", correct: "- (mínus)" },
+        { area: "Total Commander", q: "Presunúť sa na posledný súbor v zozname", correct: "End" },
+        { area: "Total Commander", q: "Presunúť sa na prvý súbor v zozname", correct: "Home" },
+        { area: "Total Commander", q: "Prepnúť medzi ľavým a pravým panelom", correct: "Tab" },
+
+        // Excel
+        { area: "Excel", q: "Označiť celú tabuľku", correct: "Ctrl + A" },
+        { area: "Excel", q: "Označiť neprilehlé bunky", correct: "Ctrl + myš (ľavé tlačidlo)" },
+        { area: "Excel", q: "Označiť vyplnené bunky", correct: "Ctrl + Shift + šípky" },
+        { area: "Excel", q: "Presunúť sa na ďalší hárok", correct: "Ctrl + Page down" },
+        { area: "Excel", q: "Presunúť sa na predchádzajúci hárok", correct: "Ctrl + Page up" },
+        { area: "Excel", q: "Presunúť sa na koniec/začiatok riadka/stĺpca", correct: "Ctrl + šípky" },
+        { area: "Excel", q: "Nastaviť tučné písmo", correct: "Ctrl + B" },
+        { area: "Excel", q: "Nastaviť kurzívu", correct: "Ctrl + I" },
+        { area: "Excel", q: "Pridať podčiarknutie", correct: "Ctrl + U" },
+        { area: "Excel", q: "Zalomiť text v bunke", correct: "Alt + Enter" },
+        { area: "Excel", q: "Upraviť hodnotu v bunke", correct: "F2" },
+        { area: "Excel", q: "Aktivovať funkciu SUM", correct: "Alt + =" },
+        { area: "Excel", q: "Pridať stĺpec/riadok", correct: "Ctrl + plus" },
+        { area: "Excel", q: "Odstrániť stĺpec/riadok", correct: "Ctrl + mínus" },
+        { area: "Excel", q: "Uložiť dokument", correct: "Ctrl + S" },
+        { area: "Excel", q: "Otvoriť dialógové okno Nájsť a nahradiť", correct: "Ctrl + F" },
+        { area: "Excel", q: "Vytvoriť hypertextové prepojenie", correct: "Ctrl + K" },
+        { area: "Excel", q: "Vytvoriť nový prázdny zošit", correct: "Ctrl + N" },
+        { area: "Excel", q: "Otvoriť možnosť Tlačiť", correct: "Ctrl + P" },
+
+        // Ladesk
+        { area: "Ladesk", q: "Vyriešiť ticket", correct: "Ctrl + E" },
+        { area: "Ladesk", q: "Zatvoriť okno ticketu", correct: "Ctrl + Q" },
+        { area: "Ladesk", q: "Odoslať správu", correct: "Ctrl + S" },
+        { area: "Ladesk", q: "Odložiť správu", correct: "Ctrl + O" },
+        { area: "Ladesk", q: "Zobraziť ťaháky", correct: "Ctrl + Space" },
+        { area: "Ladesk", q: "Otvoriť ticket na pozadí", correct: "Ctrl + ľavý klik" },
+        { area: "Ladesk", q: "Prechádzať cez otvorené karty ticketov doprava", correct: "Ctrl + ↑" },
+        { area: "Ladesk", q: "Prechádzať cez otvorené karty ticketov doľava", correct: "Ctrl + ↓" },
+        { area: "Ladesk", q: "Otvoriť nápovedu skratiek", correct: "Alt + H" },
+        { area: "Ladesk", q: "Pridanie flagu/značky danému ticketu", correct: "Ctrl + Shift + D" }
+
+    ];
+
+    const QUIZ_TOTAL = 20;
+    const QUIZ_TIME = 180;
+
+    // ===== KVÍZ STAV =====
+    let quizPool = [];
+    let currentIndex = 0;
+    let answers = [];
+    let quizStarted = false;
+    let timeLeft = QUIZ_TIME;
+    let timer = null;
+
+    // ===== KVÍZ ELEMENTY =====
+    const elements = {
+        qNum: document.getElementById('qNum'),
+        qTotal: document.getElementById('qTotal'),
+        qArea: document.getElementById('qArea'),
+        qText: document.getElementById('qText'),
+        qOptions: document.getElementById('qOptions'),
+        qScore: document.getElementById('qScore'),
+        qWrong: document.getElementById('qWrong'),
+        qTime: document.getElementById('qTime'),
+        qTimeFill: document.getElementById('qTimeFill'),
+        qPrev: document.getElementById('qPrev'),
+        qNext: document.getElementById('qNext'),
+        qReset: document.getElementById('qReset'),
+        qResult: document.getElementById('qResult'),
+        qName: document.getElementById('qName'),
+        qNameOverlay: document.getElementById('qNameOverlay'),
+        qExport: document.getElementById('qExport'),
+        dl: document.getElementById('dl')
+    };
+
+    // ===== KVÍZ FUNKCIE =====
+    function shuffleArray(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+
+    function generateOptions(correctAnswer) {
+        const allAnswers = [...new Set(QUESTION_POOL.map(q => q.correct))];
+        const options = [correctAnswer];
+        
+        const otherAnswers = allAnswers.filter(a => a !== correctAnswer);
+        while (options.length < 4 && otherAnswers.length > 0) {
+            const randomIndex = Math.floor(Math.random() * otherAnswers.length);
+            options.push(otherAnswers.splice(randomIndex, 1)[0]);
+        }
+        
+        while (options.length < 4) {
+            options.push('Ctrl + S');
+        }
+        
+        return shuffleArray(options);
+    }
+
+    function isNameValid() {
+        const name = (elements.qName.value || '').trim();
+        return /\S+\s+\S+/.test(name);
+    }
+
+    function applyNameValidation() {
+        const valid = isNameValid();
+        elements.qName.classList.toggle('invalid', !valid);
+        elements.qNameOverlay.style.display = valid ? 'none' : 'block';
+        
+        // Zakázať tlačidlá ak nie je meno platné
+        elements.qPrev.disabled = !valid;
+        elements.qNext.disabled = !valid;
+        elements.qReset.disabled = !valid;
+        if (elements.qExport) elements.qExport.disabled = !valid;
+        
+        const optionButtons = elements.qOptions.querySelectorAll('.option');
+        optionButtons.forEach(btn => btn.disabled = !valid);
+    }
+
+    function updateTimebar() {
+        const percentage = Math.max(0, Math.min(100, (timeLeft / QUIZ_TIME) * 100));
+        elements.qTimeFill.style.width = percentage + '%';
+        
+        elements.qTimeFill.classList.remove('good', 'warn', 'critical', 'blink');
+        if (percentage > 60) {
+            elements.qTimeFill.classList.add('good');
+        } else if (percentage > 30) {
+            elements.qTimeFill.classList.add('warn');
+        } else {
+            elements.qTimeFill.classList.add('critical');
+            if (timeLeft <= 10) {
+                elements.qTimeFill.classList.add('blink');
+            }
+        }
+    }
+
+    function updateCounters() {
+        const correct = answers.filter(a => a && a.isCorrect).length;
+        const wrong = answers.filter(a => a && a.isCorrect === false).length;
+        elements.qScore.textContent = correct;
+        elements.qWrong.textContent = wrong;
+    }
+
+    function startTimer() {
+        if (quizStarted) return;
+        quizStarted = true;
+        
+        timer = setInterval(() => {
+            timeLeft--;
+            elements.qTime.textContent = timeLeft;
+            updateTimebar();
+            
+            if (timeLeft <= 0) {
+                finishQuiz();
+            }
+        }, 1000);
+    }
+
+    function renderQuestion() {
+        if (!quizPool.length) return;
+        
+        const question = quizPool[currentIndex];
+        elements.qNum.textContent = currentIndex + 1;
+        elements.qArea.textContent = question.area;
+        elements.qText.textContent = question.q;
+        
+        // Vygenerovať možnosti
+        const options = generateOptions(question.correct);
+        elements.qOptions.innerHTML = '';
+        
+        options.forEach(option => {
+            const btn = document.createElement('button');
+            btn.className = 'option';
+            btn.textContent = option;
+            btn.addEventListener('click', () => selectAnswer(option));
+            elements.qOptions.appendChild(btn);
+        });
+        
+        // Označiť ak už je odpovedané
+        const answer = answers[currentIndex];
+        if (answer) {
+            const optionBtns = elements.qOptions.querySelectorAll('.option');
+            optionBtns.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === answer.selected) {
+                    btn.classList.add(answer.isCorrect ? 'correct' : 'wrong');
+                }
+                if (!answer.isCorrect && btn.textContent === question.correct) {
+                    btn.classList.add('correct');
+                }
+            });
+        }
+        
+        // Aktualizovať tlačidlá navigácie
+        elements.qPrev.disabled = currentIndex === 0;
+        // Ďalšia otázka je povolená len ak je aktuálna zodpovedaná ALEBO ak ideme späť z už zodpovedanej otázky
+        const isCurrentAnswered = answers[currentIndex];
+        elements.qNext.disabled = currentIndex === QUIZ_TOTAL - 1 || !isCurrentAnswered;
+        
+        applyNameValidation();
+    }
+
+    function selectAnswer(selectedOption) {
+        if (!isNameValid()) {
+            applyNameValidation();
+            return;
+        }
+        
+        if (answers[currentIndex]) return; // Už odpovedané
+        
+        startTimer();
+        
+        const question = quizPool[currentIndex];
+        const isCorrect = selectedOption === question.correct;
+        
+        answers[currentIndex] = {
+            selected: selectedOption,
+            isCorrect: isCorrect
+        };
+        
+        // Vizuálne označiť odpovede
+        const optionBtns = elements.qOptions.querySelectorAll('.option');
+        optionBtns.forEach(btn => {
+            btn.disabled = true;
+            if (btn.textContent === selectedOption) {
+                btn.classList.add(isCorrect ? 'correct' : 'wrong');
+            }
+            if (!isCorrect && btn.textContent === question.correct) {
+                btn.classList.add('correct');
+            }
+        });
+        
+        updateCounters();
+        
+        // Automaticky na ďalšiu otázku po správnej odpovedi
+        if (isCorrect) {
+            setTimeout(() => {
+                if (currentIndex < QUIZ_TOTAL - 1) {
+                    nextQuestion();
+                } else {
+                    finishQuiz();
+                }
+            }, 1500);
+        }
+        
+        // Zobraz export tlačidlo ak sú všetky otázky zodpovedané
+        checkIfAllAnswered();
+    }
+
+    function checkIfAllAnswered() {
+        const allAnswered = answers.every(a => a && a.selected);
+        if (allAnswered && isNameValid() && elements.qExport) {
+            elements.qExport.style.display = 'flex';
+        }
+    }
+
+    function exportCSV() {
+        if (!isNameValid()) {
+            applyNameValidation();
+            alert('Najprv vyplň meno a priezvisko.');
+            return;
+        }
+        
+        const name = elements.qName.value.trim() || 'Nezadané';
+        const correct = answers.filter(a => a && a.isCorrect).length;
+        const wrong = answers.filter(a => a && a.isCorrect === false).length;
+        const percentage = Math.round((correct / QUIZ_TOTAL) * 100);
+        const elapsed = quizStarted ? (QUIZ_TIME - timeLeft) : 0;
+        const passed = correct === QUIZ_TOTAL;
+
+        const now = new Date();
+        const pad = (n) => String(n).padStart(2,'0');
+        const yyyy = now.getFullYear(), mm = pad(now.getMonth()+1), dd = pad(now.getDate());
+        const HH = pad(now.getHours()), MM = pad(now.getMinutes()), SS = pad(now.getSeconds());
+        const localDate = `${dd}.${mm}.${yyyy}`;
+        const localTime = `${HH}:${MM}:${SS}`;
+
+        // Riadok 1 - Hlavičky
+        const headerRow = [
+            'Meno Priezvisko',
+            'Dátum', 
+            'Čas',
+            'Počet otázok',
+            'Správne odpovedané',
+            'Nesprávne odpovedané', 
+            'Percentuálna úspešnosť',
+            'Čas trvanie testu', 
+            'Splnený test'
+        ];
+
+        // Riadok 2 - Hodnoty
+        const valuesRow = [
+            name,                           
+            localDate,                      
+            localTime,                      
+            QUIZ_TOTAL,                     
+            correct,                        
+            wrong,                          
+            `${percentage}%`,               
+            `${elapsed}s`,                  
+            passed ? 'ANO' : 'NIE'         
+        ];
+
+        // Riadok 3 - prázdny
+        const emptyRow = ['', '', '', '', '', '', '', '', ''];
+
+        // Riadok 4 - Hlavička pre detail otázok
+        const detailHeader = [
+            'poradie', 
+            'oblast', 
+            'otazka', 
+            'spravna_odpoved', 
+            'zvolena_odpoved', 
+            'je_spravna'
+        ];
+
+        // Riadky 5+ - Detail každej otázky
+        const detailRows = [];
+        for (let i = 0; i < QUIZ_TOTAL; i++) {
+            const q = quizPool[i];
+            const a = answers[i] || {selected:'', isCorrect:false};
+            detailRows.push([
+                (i+1),                      // poradie
+                q.area,                     // oblasť
+                q.q,                        // otázka
+                q.correct,                  // správna odpoveď
+                a.selected || '',           // zvolená odpoveď
+                a.isCorrect ? 'ANO' : 'NIE' // je správna
+            ]);
+        }
+        
+        // Kombinuj všetky riadky
+        const allRows = [headerRow, valuesRow, emptyRow, detailHeader, ...detailRows];
+        
+        const esc = (v) => `"${String(v).replaceAll('"','""')}"`;
+        const csvCore = allRows.map(row => row.map(esc).join(';')).join('\r\n');
+        const csv = '\ufeff' + csvCore;
+        const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+        const url = URL.createObjectURL(blob);
+        const nameSlug = name.toLowerCase().replace(/[^\w-]+/g,'-').replace(/-+/g,'-');
+        const fn = `kviz_${nameSlug}_${yyyy}-${mm}-${dd}_${HH}${MM}${SS}.csv`;
+        
+        elements.dl.href = url;
+        elements.dl.download = fn;
+        elements.dl.click();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+
+    function nextQuestion() {
+        if (!answers[currentIndex]) {
+            return; // Nič nerob ak nie je otázka zodpovedaná
+        }
+        if (currentIndex < QUIZ_TOTAL - 1) {
+            currentIndex++;
+            renderQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderQuestion();
+        }
+    }
+
+    function resetQuiz() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+        
+        quizStarted = false;
+        timeLeft = QUIZ_TIME;
+        currentIndex = 0;
+        answers = new Array(QUIZ_TOTAL).fill(null);
+        
+        quizPool = shuffleArray(QUESTION_POOL).slice(0, QUIZ_TOTAL);
+        
+        elements.qTime.textContent = timeLeft;
+        updateTimebar();
+        updateCounters();
+        elements.qResult.style.display = 'none';
+        if (elements.qExport) elements.qExport.style.display = 'none';
+        
+        renderQuestion();
+    }
+
+    function finishQuiz() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+        
+        const correct = answers.filter(a => a && a.isCorrect).length;
+        const wrong = answers.filter(a => a && a.isCorrect === false).length;
+        const percentage = Math.round((correct / QUIZ_TOTAL) * 100);
+        const passed = correct === QUIZ_TOTAL;
+        
+        elements.qResult.style.display = 'block';
+        elements.qResult.className = 'result-banner ' + (passed ? 'result-ok' : 'result-bad');
+        elements.qResult.textContent = passed ? 
+            `Kvíz splnený! 🎉 ${correct}/${QUIZ_TOTAL} správnych (${percentage}%).` :
+            `Kvíz nesplnený. Výsledok: ${correct}/${QUIZ_TOTAL} správnych (${percentage}%), ${wrong} nesprávnych.`;
+        
+        // Zobraz export tlačidlo po dokončení
+        checkIfAllAnswered();
+    }
+
+    // ===== INICIALIZÁCIA KVÍZU =====
+    function initQuiz() {
+        elements.qTotal.textContent = QUIZ_TOTAL;
+        resetQuiz();
+        
+        // Event listenery
+        elements.qNext.addEventListener('click', nextQuestion);
+        elements.qPrev.addEventListener('click', prevQuestion);
+        elements.qReset.addEventListener('click', resetQuiz);
+        if (elements.qExport) elements.qExport.addEventListener('click', exportCSV);
+        elements.qName.addEventListener('input', applyNameValidation);
+        
+        applyNameValidation();
+    }
+
+    // ===== PREPÍNANIE KARIET =====
+    const tabs = document.querySelectorAll('.tab');
+    const sections = ['shortcuts', 'quiz', 'practice', 'finaltest'];
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Odstrániť active zo všetkých
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Skryj všetky sekcie
+            sections.forEach(sec => {
+                const element = document.getElementById(sec);
+                if (element) {
+                    element.style.display = 'none';
+                }
+            });
+            
+            // Zobraz aktuálnu sekciu
+            const targetSection = document.getElementById(this.dataset.tab);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+            
+            // Ak ide o kvíz, fokus na meno
+            if (this.dataset.tab === 'quiz' && !isNameValid()) {
+                setTimeout(() => elements.qName.focus(), 100);
+            }
+        });
+    });
+
+    // ===== PRAKTICKÝ TEST =====
+    const toggleHints = document.getElementById('toggleHints');
+    if (toggleHints) {
+        let hintsVisible = false;
+        toggleHints.addEventListener('click', () => {
+            hintsVisible = !hintsVisible;
+            
+            const hints = document.querySelectorAll('.hint');
+            hints.forEach(hint => {
+                if (hintsVisible) {
+                    const shortcuts = hint.parentElement.getAttribute('data-shortcuts') || '';
+                    hint.textContent = ' — skratky: ' + shortcuts.replace(/;/g, ' | ');
+                    hint.style.display = 'inline';
+                } else {
+                    hint.style.display = 'none';
+                }
+            });
+            
+            toggleHints.textContent = hintsVisible ? 
+                'Skryť nápovedy (skratky)' : 
+                'Zobraziť nápovedy (skratky)';
+        });
+    }
+
+    // Progress tracking
+    function updateProgress() {
+        const sections = [
+            { id: 'p1', counter: 'p1done' },
+            { id: 'p2', counter: 'p2done' },
+            { id: 'p3', counter: 'p3done' },
+            { id: 'p4', counter: 'p4done' },
+            { id: 'p5', counter: 'p5done' }
+        ];
+        
+        sections.forEach(section => {
+            const sectionEl = document.getElementById(section.id);
+            const counterEl = document.getElementById(section.counter);
+            
+            if (sectionEl && counterEl) {
+                const checkboxes = sectionEl.querySelectorAll('.chk');
+                const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+                counterEl.textContent = checked;
+            }
+        });
+    }
+
+    // Checkbox handling
+    const checkboxes = document.querySelectorAll('.chk');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateProgress);
+    });
+
+    // Task item klikanie
+    const taskItems = document.querySelectorAll('.task-item');
+    taskItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            if (e.target.type !== 'checkbox') {
+                const checkbox = item.querySelector('.chk');
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    updateProgress();
+                }
+            }
+        });
+    });
+
+    // ===== FINÁLNY TEST =====
+    const taskUnlock = document.getElementById('taskUnlock');
+    const taskPwd = document.getElementById('taskPwd');
+    
+    if (taskUnlock && taskPwd) {
+        taskUnlock.addEventListener('click', () => {
+            const password = taskPwd.value.trim();
+            if (password === 'test') {
+                document.getElementById('taskLocked').style.display = 'none';
+                document.getElementById('taskBody').style.display = 'block';
+            } else {
+                alert('Nesprávne heslo.');
+            }
+        });
+        
+        taskPwd.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                taskUnlock.click();
+            }
+        });
+    }
+
+    // ===== ŠTART =====
+    initQuiz();
+    console.log('Všetko inicializované!');
+});
+
+</script>
+
+</body>
+</html>
