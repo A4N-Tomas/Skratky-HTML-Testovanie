@@ -615,7 +615,7 @@
     <!-- PRACTICE -->
     <section id="practice" class="card" style="display:none;">
       <h2>Praktický test — Reálne kroky v aplikáciách</h2>
-      <p class="big">Vykonaj nasledovné úlohy v skutočných aplikáciách. Zaškrtávaj si splnené body — progres sa počíta zvlášť pre každú sekciu.</p>
+      <p class="big">Vykonaj nasledovné úlohy v skutočných aplikáciách. Zaškrtávaj si splnené body — progres sa počíta zvlášť pre každú sekciu. Cieľom je splniť praktický test do 8 minút.</p>
       
       <div class="practice-controls">
         <button id="toggleHints" class="btn">
@@ -823,53 +823,76 @@
       </div>
     </section>
 
-    <!-- FINAL TEST -->
-    <section id="finaltest" class="card" style="display:none;">
-      <h2>Záverečný test</h2>
-      <div id="taskLocked" class="center" style="gap:8px">
-        <input type="password" id="taskPwd" placeholder="Zadaj heslo" autocomplete="off" />
-        <button id="taskUnlock" class="btn primary">
-          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/>
-          </svg>
-          Odomknúť
-        </button>
-      </div>
-      <div id="taskBody" style="display:none">
-        <h3>Total Commander</h3>
-        <ol>
-          <li>V ľavom paneli Total Commander prejdite na disk <code>C:\</code> a vytvor priečinok „Finálne testovanie".</li>
-          <li>V priečinku „Finálne testovanie" vytvor textový súbor a pomenuj ho „príprava testovania.txt".</li>
-          <li>Skopíruj súbor do pravého panela na disk <code>C:\</code> a premenuj ho na „pokračovanie testovania.txt".</li>
-          <li>Označ a vymaž oba pôvodné textové súbory naraz v ľavom paneli.</li>
-        </ol>
-
-        <h3>Microsoft Word</h3>
-        <ol>
-          <li>Otvor Microsoft Word.</li>
-          <li>Napíš vetu: Ráno som vstal skoro, pretože som mal dôležitý deň.</li>
-          <li>Slovo „som" vystrihni a vlož ho na koniec vety.</li>
-          <li>Skús dokument vytlačiť — otvor ukážku pred tlačou a okno zavri.</li>
-          <li>Urob výrez obrazovky okna Wordu a potom aplikáciu zatvor bez uloženia.</li>
-        </ol>
-
-        <h3>Mozilla Firefox</h3>
-        <ol>
-          <li>Otvor v prehliadači Mozilla Firefox stránku MojeSidlo.sk.</li>
-          <li>V novom tabe otvor orsr.sk a vyhľadaj firmu All4Net s.r.o.</li>
-          <li>Skopíruj IČO firmy do google a vyhľadaj ho na finstat.sk.</li>
-          <li>Vráť sa na kartu MojeSidlo.sk.</li>
-          <li>Zmenši okno prehliadača, potom ho zväčši a nakoniec aktuálnu kartu zatvor.</li>
-        </ol>
-      </div>
-    </section>
+<!-- FINAL TEST -->
+<section id="finaltest" class="card" style="display:none;">
+  <h2>Záverečný test</h2>
+  <div id="taskLocked" class="center" style="gap:8px">
+    <input type="password" id="taskPwd" placeholder="Zadaj heslo" autocomplete="off" />
+    <button id="taskUnlock" class="btn primary">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+      </svg>
+      Odomknúť
+    </button>
   </div>
+  <div id="taskBody" style="display:none">
+    <h3>Total Commander</h3>
+    <ol>
+      <li>Prejdi na C:\ a vytvor priečinok Testovanie.</li>
+      <li>V priečinku Testovanie vytvor textový súbor ulož ako "Záverečné_testovanie.txt" a napíš do súboru svoje celé meno.</li>
+      <li>Premenuj súbor tak, aby sa volal "koniec_testovania.txt".</li>
+      <li>Skopíruj súbor do druhého panela (napr. do C:\-= Download =-).</li>
+      <li>Vymaž pôvodný priečinok "Testovanie" na disku C:\ a na druhom panely vymaž textový súbor "koniec_testovania.txt".</li>
+    </ol>
+
+    <h3>Microsoft Word</h3>
+    <ol>
+      <li>Otvor Microsoft Word.</li>
+      <li>Napíš vetu: Ráno som vstal skoro, pretože som mal dôležitý deň.</li>
+      <li>Vymaž prvé a posledné slovo vo vete.</li>
+      <li>Prvú časť vety vystrihni a vlož ju za druhú časť vety.</li>
+      <li>Skopíruj celú vetu a vlož ju do adresného riadku v prehliadači.</li>
+      <li>Vráť sa do Wordu a urob printscreen obrazovky okna Wordu a  vlož ju do dokumentu.</li>
+      <li>Otvor dialógové okno ukážka pred tlačou, dokument ale nevytlačíme. Následnej aplikáciu zatvor bez uloženia.</li>
+    </ol>
+
+  <h3>Ladesk</h3>
+    <ol>
+      <li>Otvor si dva tickety v Ladesku z tvojej e-mailovej schránky.</li>
+      <li>Jeden ticket označ značkou/flagou "Brigada".</li>
+      <li>Otvor odpovedanie na ticket a zobraz ťaháky v Ladesku.</li>
+      <li>Odstráň značku/flagu "Brigada" z otvoreného ticektu.</li>
+      <li>Prechádzaj medzi otvorenými kartami ticketov (doprava a doľava).</li>
+      <li>Zobraz nápovedu klávesových skratiek v Ladesku.</li>
+      <li>Zatvor okno aktuálneho ticketu.</li>
+    </ol>
+
+    <h3>Excel</h3>
+    <ol>
+      <li>Do B1 napíš slovo „Testovanie" a ztučni ho a použi kurzivu.</li>
+      <li>V B2:B6 maj čísla od 10 do 15 a do bunky B7 automaticky spočítaj bunky B2:B6.</li>
+      <li>Nad riadok 3 vlož prázdny riadok.</li>
+      <li>Do bunky C10 vlož hypertextový odkaz na mojesidlo.sk.</li>
+      <li>Vyhľadaj číslo 14 v dokumente a vymaž ho.</li>
+      <li>Otvor náhľad tlače. Zavri okno aj dokument bez uloženia.</li>
+    </ol>
+
+    <h3>Prehliadač - Mozilla Firefox</h3>
+    <ol>
+      <li>Otvor stránku MojeSidlo.cz a v záložke kontakt si skopíruj IČO firmy.</li>
+      <li>V novom tabe vyhľadaj pomocou google stránku český obchodní rejstřík. Otvor webovú stránku a vlož IČO do vyhľadávača a vyhľadaj firmu.</li>
+      <li>Vráť na kartu s MojeSidlo.cz a preklikni sa na "Galéria" stiahni prvú fotku do z galérie do počítača a otvor posledné sťahované súbory v prehliadači.</li>
+      <li>Minimalizuj prehliadač, potom ho maximalizuj na celú obrazovku a nakoniec zruš všetky karty v prehliadači okrem testu.</li>
+    </ol>
+  </div>
+</section>
+</div>
 
 <script>
 console.log('Skript sa načítal');
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM je pripravený');
+console.log('DOM je pripravený');
     
     // ===== KVÍZ DATA =====
     const QUESTION_POOL = [
